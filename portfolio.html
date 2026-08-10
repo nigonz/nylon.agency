@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYLON | Archivo de Proyectos Cinemático V.3.0</title>
+
+    <!-- ESTE ES EL REDIRECT QUE FALTA AGREGAR -->
+    <script>
+        if (window.innerWidth <= 768) {
+            window.location.replace("portfolio_mobile.html");
+        }
+    </script>
+    <!-- FIN DEL REDIRECT -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        :root {
+            --petrol: #05d7da;
+            --bg: #020205;
+            --white-glow: rgba(255, 255, 255, 0.3);
+            --blue-glow: rgba(0, 180, 216, 0.4);
+        }
+            
+        html, body, #starfield, .viewport, .scene {
+            cursor: auto !important;
+        }
+        
+        /* Sobrescribir cursor: none del CSS global para portfolio */
+        body.cursor-visible, html.cursor-visible {
+            cursor: auto !important;
+        }
+
+        #staff-nav {
+            position: fixed; 
+            top: 20px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 1200px;
+            z-index: 2000;
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            padding: 15px 30px !important;
+            min-height: 60px;
+            background: rgba(5, 5, 12, 0.55);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 40px;
+            pointer-events: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        .nav-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 13px; font-weight: 700;
+            letter-spacing: 6px;
+            color: rgba(5,215,218,0.6);
+            text-transform: uppercase;
+        }
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            background: rgba(0,5,15,0.5);
+            border: 1px solid rgba(5,215,218,0.18);
+            border-top: 2px solid var(--petrol);
+            padding: 10px 24px;
+            backdrop-filter: blur(10px);
+        }
+        #staff-nav a {
+            color: rgba(255,255,255,0.95);
+            text-decoration: none;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px; font-weight: 400;
+            letter-spacing: 0.5px; text-transform: capitalize;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+        #staff-nav a:hover {
+            color: var(--petrol);
+        }
+        @media (max-width: 600px) {
+            #staff-nav { padding: 10px 14px; flex-direction: column; gap: 15px; }
+            .nav-links { gap: 14px; padding: 8px 14px; flex-wrap: wrap; justify-content: center; }
+            #staff-nav a { font-size: 14px; }
+        }
+
+        
+        #starfield {
+            position: fixed; inset: 0; z-index: 1; pointer-events: none;
+        }
+
+        
+        .hud-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; 
+            z-index: 100;
+            background: radial-gradient(circle at center, transparent 40%, rgba(2, 2, 5, 0.96) 100%);
+        }
+
+        #scrollHint {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            pointer-events: none;
+            z-index: 101;
+        }
+
+        .hint-label {
+            font-family: var(--font-tech, 'Space Grotesk', sans-serif);
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #ffffff;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.9);
+        }
+
+        .hint-chevrons span {
+            display: block;
+            width: 18px;
+            height: 20px;
+            border-right: 3px solid #ffffff;
+            border-bottom: 3px solid #ffffff;
+            transform: rotate(45deg);
+            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+            animation: fadeChevrons 1.5s infinite ease-in-out;
+        }
+
+        .hint-chevrons span:nth-child(1) {
+            animation-delay: 0s;
+        }
+        .hint-chevrons span:nth-child(2) {
+            animation-delay: 0.22s;
+        }
+        .hint-chevrons span:nth-child(3) {
+            animation-delay: 0.44s;
+        }
+
+        @keyframes fadeChevrons {
+            0%, 100% {
+                opacity: 0.15;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        
+        .scroll-container { height: 5000px; width: 100%; position: absolute; top: 0; }
+        
+        .viewport {
+            position: fixed; top: 90px; left: 0;
+            width: 100vw; height: calc(100vh - 90px);
+            perspective: 800px; overflow: hidden; 
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .scene {
+            width: 100%; height: 100%; position: absolute;
+            transform-style: preserve-3d;
+            transform: translateZ(0px);
+            transform-origin: center center;
+        }
+
+        
+        .project-card {
+            position: absolute; top: 50%; left: 50%;
+            width: 30vw; max-width: 400px; 
+            aspect-ratio: 9 / 16;
+            background: rgba(0, 5, 15, 0.7);
+            border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(8px);
+            cursor: pointer; 
+            overflow: hidden;
+            display: flex; flex-direction: column;
+            pointer-events: auto;
+            z-index: 50;
+        }
+
+        @keyframes warpSpeed {
+            0%, 100% { box-shadow: 0 0 30px 5px var(--white-glow), 0 0 60px 10px var(--blue-glow); }
+            50% { box-shadow: 0 0 50px 10px rgba(255,255,255,0.5), 0 0 90px 20px rgba(5, 215, 218, 0.5); }
+        }
+
+        .project-card:hover { 
+            border-color: var(--petrol); 
+            animation: none; 
+            box-shadow: 0 0 70px 15px rgba(255,255,255,0.6), 0 0 120px 25px rgba(5, 215, 218, 0.6);
+        }
+
+        .project-video-preview {
+            width: 100%; height: 75%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-video {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+            will-change: transform;
+        }
+
+        .project-info {
+            height: 25%; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            background: rgba(0, 0, 0, 0.9); border-top: 1px solid rgba(255,255,255,0.1);
+            position: relative; z-index: 6; 
+        }
+
+        .project-title {
+            font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700;
+            letter-spacing: 3px; text-transform: uppercase; color: #fff; margin-bottom: 2px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+            text-align: center; padding: 0 10px;
+        }
+        .project-client { font-family: "Instrument Serif", serif; font-size: 1.1rem; font-style: italic; color: var(--petrol); }
+
+        .project-card::before, .project-card::after {
+            content: ''; position: absolute; width: 25px; height: 25px;
+            border: 2px solid transparent; transition: all 0.3s; pointer-events: none; z-index: 5;
+        }
+        .project-card::before { top: 12px; left: 12px; border-top-color: var(--petrol); border-left-color: var(--petrol); opacity: 0; }
+        .project-card::after { bottom: 12px; right: 12px; border-bottom-color: var(--petrol); border-right-color: var(--petrol); opacity: 0; }
+        .project-card:hover::before, .project-card:hover::after { opacity: 1; }
+
+        /* ── ADAPTIVE LAYOUT VARIABLES ── */
+        :root {
+          --is-mobile: 0;
+        }
+        
+        @media (max-width: 768px) {
+          :root { --is-mobile: 1; }
+          
+          .scroll-indicator { display: none; }
+          
+          .viewport {
+            position: relative;
+            top: 90px;
+            width: 100vw;
+            height: auto;
+            perspective: none;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            z-index: 10;
+          }
+          
+          .scene {
+            width: 100%;
+            height: auto;
+            position: relative;
+            transform-style: initial;
+            transform: none;
+          }
+          
+          .project-card {
+            position: relative;
+            top: auto;
+            left: auto;
+            width: 90vw !important;
+            max-width: 100% !important;
+            margin: 20px auto;
+            transform: none !important;
+            opacity: 1 !important;
+            z-index: auto !important;
+            aspect-ratio: 9 / 16;
+          }
+          
+          .project-card:hover {
+            transform: scale(1.02);
+          }
+          
+          .scroll-container { display: none; }
+        }
+
+        @media (max-width: 768px) {
+            .project-card { width: 65vw; } 
+            .project-title { font-size: 1.2rem; }
+            .project-client { font-size: 0.9rem; }
+        }
+    </style>
+
+    
+
+    <style>
+        
+        @media (max-width: 768px) {
+            #staff-nav {
+                min-height: 60px !important;
+                padding: 10px 12px !important;
+            }
+            .nav-links {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                gap: 8px !important;
+                justify-content: center !important;
+                width: 100%;
+            }
+            #staff-nav a {
+                font-size: 0.85rem !important;
+                padding: 8px 4px !important;
+                white-space: nowrap !important;
+                text-align: center;
+            }
+        }
+
+        
+        .staff-section,
+        .agency-description,
+        .portfolio-grid,
+        .portfolio-mobile-grid,
+        .ugc-section,
+        .brand-section,
+        .comercial-section,
+        .eventos-section,
+        .contacto-section,
+        main {
+            padding-top: 100px !important;
+            margin-top: 0 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="staff-nav">
+        <span class="nav-logo">NYLON</span>
+                            <div class="nav-links">
+                <a href="index.html#main-video">Inicio</a>
+                <a href="somos.html">Somos</a>
+                <a href="servicios.html">Servicios</a>
+                <a href="contacto.html">Contacto</a>
+            </div>
+    </nav>
+
+    <canvas id="starfield"></canvas>
+    <div class="hud-overlay"></div>
+    
+    <div id="scrollHint">
+        <div class="hint-label">SCROLL</div>
+        <div class="hint-chevrons">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <div class="scroll-container" id="scroll-track"></div>
+
+    <div class="viewport">
+        <div class="scene" id="scene3d"></div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Forzar cursor visible en portfolio.html
+        document.body.classList.add('cursor-visible');
+        document.documentElement.classList.add('cursor-visible');
+        
+        gsap.registerPlugin(ScrollTrigger);
+
+        const videos = ['videos/host.mp4','videos/trailermarcas.mp4','videos/trailer comercial.mp4', 'videos/miniaturadiseno.mp4', 'videos/sport.mp4', 'videos/miniaturadron.mp4'];
+        const projectNames = ['Periodismo - Host On Camera ', 'Brand Experience', 'Contenido Audiovisual', 'Diseño Gráfico', 'Eventos', 'Drone Works'];
+        
+        const projectLinks = [
+            'host.html',
+            'holo.html', 
+            'comercial.html',         
+            'ugc.html', 
+            'deportes.html', 
+            'eventos.html', 
+        ];
+
+        const projectsPreviewData = Array.from({length: 6}, (_, i) => ({
+            titulo: projectNames[i],
+            videoSrc: videos[i],
+            linkPortfolio: projectLinks[i]
+        }));
+
+        const scene = document.getElementById("scene3d");
+
+        projectsPreviewData.forEach((proj, i) => {
+            const pairIndex = Math.floor(i / 2); 
+            const isLeft = i % 2 === 0;
+            const sideFactor = isLeft ? -1 : 1; 
+            const zPos = -(pairIndex * 800) - 200; 
+            const xSpread = 12 + ((3 - pairIndex) * 11); 
+            const xPos = xSpread * sideFactor;
+
+            const card = document.createElement("div");
+            card.className = "project-card";
+            
+            card.style.transform = `translate(calc(-50% + ${xPos}vw), -50%) translateZ(${zPos}px)`;
+            
+            card.innerHTML = `
+                <div class="project-video-preview" style="pointer-events: none;">
+                    <video src="${proj.videoSrc}" autoplay loop muted playsinline preload="auto" class="card-video"></video>
+                </div>
+                <div class="project-info" style="pointer-events: none;">
+                    <div class="project-title">${proj.titulo}</div>
+                </div>
+            `;
+
+            card.addEventListener("click", () => {
+                window.location.href = proj.linkPortfolio; 
+            });
+            
+            scene.appendChild(card);
+        });
+
+        const maxDepth = Math.floor((projectsPreviewData.length - 1) / 2) * 800 + 400;
+        const isMobile = window.innerWidth <= 768;
+        
+        if (!isMobile) {
+          gsap.to(scene, {
+              z: maxDepth, 
+              ease: "none",
+              scrollTrigger: {
+                  trigger: "#scroll-track",
+                  start: "top top",
+                  end: "bottom bottom",
+                  scrub: 1 
+              }
+          });
+        } else {
+          // Mobile: viewport maneja scroll nativo
+          scene.style.transform = 'none';
+        }
+
+        const canvas = document.getElementById("starfield");
+        const ctx = canvas.getContext("2d");
+        let W, H, stars = [], warp = 1, targetWarp = 1, warpTimer;
+
+        function initStars() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+            stars = Array.from({ length: 800 }, () => ({
+                x: Math.random() * W - W / 2,
+                y: Math.random() * H - H / 2,
+                z: Math.random() * W,
+            }));
+        }
+        
+        function drawStars() {
+            warp += (targetWarp - warp) * 0.12;
+            ctx.fillStyle = "rgba(0,0,0,0.4)"; 
+            ctx.fillRect(0, 0, W, H);
+            ctx.fillStyle = "white";
+            for (let s of stars) {
+                s.z -= warp;
+                if (s.z <= 0) { 
+                    s.x = Math.random() * W - W / 2; 
+                    s.y = Math.random() * H - H / 2; 
+                    s.z = W; 
+                }
+                const sx = W / 2 + (s.x / s.z) * W;
+                const sy = H / 2 + (s.y / s.z) * W;
+                const r = Math.max(0, (1 - s.z / W) * 2.5);
+                ctx.beginPath();
+                ctx.arc(sx, sy, r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            requestAnimationFrame(drawStars);
+        }
+
+        function boost() {
+            targetWarp = 35;
+            clearTimeout(warpTimer);
+            warpTimer = setTimeout(() => { targetWarp = 1; }, 150);
+        }
+
+        window.addEventListener("wheel", boost);
+        window.addEventListener("touchmove", boost);
+        window.addEventListener("resize", initStars);
+
+        initStars();
+        drawStars();
+
+        // Mobile touch swipe para cards
+        if (isMobile) {
+          let touchStartX = 0;
+          const viewport = document.querySelector('.viewport');
+          
+          viewport.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+          }, { passive: true });
+          
+          viewport.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > 50) {
+              // Swipe detectado pero scroll nativo maneja el desplazamiento
+              boost();
+            }
+          }, { passive: true });
+        }
+    });
+    </script>
+</body>
+</html>

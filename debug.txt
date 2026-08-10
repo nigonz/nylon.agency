@@ -1,0 +1,61 @@
+CALIDAD</span>4K UHD</div>
+      </div>
+
+      <canvas id="holoCanvas"></canvas>
+
+      <div class="namecard">
+        <div class="nc-br"></div><div class="nc-bl"></div>
+        <div class="nc-label">◈ Archivo Audiovisual ◈</div>
+        <div class="nc-name">Host - <em>On Camera Talent</em></div>
+        <div class="nc-sub">Periodista</div>
+        <div class="nc-tags">
+          <span class="nc-tag">UGC Creator</span>
+          <span class="nc-tag">Brand Experience</span>
+          <span class="nc-tag">Eventos</span>
+        </div>
+      </div>
+
+      <div class="scroll-cue">
+        <div class="s-tube"><div class="s-ball"></div></div>
+        <span>Explorar Archivos</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="sec-hd reveal">
+    <div class="sec-orb">▶</div>
+    <h2>Proyectos Destacados</h2>
+    <div class="sec-line"></div>
+  </div>
+
+  <section class="vsec">
+    <div class="vgrid">
+
+      <div class="fw reveal" style="--delay:0s;--dur:6.8s;--fa:float-a">
+        <div class="vcard tilt" data-vimeo="1178233168">
+          <div class="vframe">
+            <div class="video-facade" data-video-id="1178233168">
+              <div class="video-facade-play-btn">
+                <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="vcard-click-zone">
+            <div class="vcard-play-btn">
+              <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+            </div>
+          </div>
+          <div class="vfooter">
+            <div class="vf-title">Cobertura CF Moto</div>
+            <div class="vf-sub">Expo Agro · Brand Experience</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fw reveal" style="--delay:0.65s;--dur:8.1s;--fa:float-b">
+        <div class="vcard tilt" data-vimeo="1178215433">
+          <div class="vframe">
+            <div class="video-facade" data-video-id="1178215433">
+              <div class="video-facade-play-btn">
+                <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+         

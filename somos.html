@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="NYLON – Agencia audiovisual. Adaptabilidad, creatividad, impacto.">
+    <title>NYLON | Experiencia Táctica Visual</title>
+
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <!-- Performance Utilities - Optimización global -->
+    <script src="js/performance-utils.js" defer></script>
+
+    <style>
+        :root {
+            --petrol: #05D7DA;
+            --petrol-muted: rgba(5, 215, 218, 0.3);
+            --amber: #F5A623;
+            --purple-warm: rgba(142, 68, 173, 0.2);
+            --bg-deep: #000510;
+            --bg: #000510;
+            --card-bg: rgba(10, 15, 25, 0.6);
+            
+            /* Variables Tipográficas */
+            --font-title: 'Playfair Display', serif;
+            --font-garamond: 'Cormorant Garamond', serif;
+            --font-body: 'Space Grotesk', sans-serif;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-body);
+            font-weight: 300;
+            letter-spacing: 0.03em;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--petrol) var(--bg);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background: var(--bg);
+            color: #E0E6ED;
+            font-family: var(--font-body);
+            font-weight: 300;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            letter-spacing: 0.03em;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb {
+            background: var(--petrol);
+            border-radius: 3px;
+        }
+
+        #transitionOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            will-change: opacity;
+        }
+
+        .hero {
+            position: relative;
+            width: 100vw;
+            height: 100dvh;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #000;
+            z-index: 1;
+        }
+
+        #starfield {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            will-change: transform;
+        }
+
+        .nylon-logo-wrap {
+            position: absolute;
+            z-index: 3;
+            left: 50%;
+            top: 50%;
+            will-change: transform, opacity;
+        }
+
+        .nylon-logo-img {
+            width: clamp(220px, 72vw, 960px);
+            display: block;
+            mix-blend-mode: screen;
+            filter: brightness(1.05) contrast(1.1);
+            pointer-events: none;
+            user-select: none;
+            transform-origin: center center;
+            will-change: transform, opacity;
+        }
+
+        .space-word {
+            position: absolute;
+            z-index: 4;
+            left: 50%;
+            top: 50%;
+            transform-origin: center center;
+            pointer-events: none;
+            user-select: none;
+            font-family: var(--font-body);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: transparent;
+            white-space: nowrap;
+            will-change: transform, opacity;
+            opacity: 0;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.25), 0 0 30px rgba(255, 255, 255, 0.12);
+        }
+
+        .word-infinita { font-size: clamp(2.5rem, 13vw, 12rem); }
+        .word-creatividad { font-size: clamp(2rem, 10vw, 9rem); }
+        .word-adaptabilidad { font-size: clamp(1.5rem, 7.5vw, 7rem); }
+
+        #spaceBtn {
+            position: absolute;
+            z-index: 8;
+            left: 50%;
+            top: 50%;
+            will-change: transform, opacity;
+            opacity: 0;
+            pointer-events: none;
+            background: transparent;
+            border: 1px solid var(--petrol);
+            color: var(--petrol);
+            font-family: var(--font-body);
+            font-size: clamp(14px, 1.6vw, 22px);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            text-transform: capitalize;
+            padding: clamp(14px, 2.5vh, 22px) clamp(24px, 5vw, 66px);
+            white-space: nowrap;
+            cursor: pointer;
+            outline: none;
+            transition: background 0.3s, color 0.3s, border-color 0.3s;
+            min-height: 44px;
+        }
+
+        #spaceBtn:active {
+            background: var(--petrol);
+            color: var(--bg);
+        }
+
+        @media (max-width: 768px) {
+            #spaceBtn { min-height: 52px; }
+        }
+
+        #spaceBtn.clickable {
+            pointer-events: auto;
+            animation: btnPulse 3.2s ease-in-out infinite;
+        }
+
+        #spaceBtn.clickable:hover {
+            background: transparent;
+            color: var(--petrol);
+            box-shadow: 0 0 25px rgba(5, 215, 218, 0.5), inset 0 0 15px rgba(5, 215, 218, 0.2);
+            text-shadow: 0 0 10px var(--petrol);
+            animation: none;
+        }
+
+        @keyframes btnPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(5, 215, 218, 0.15); }
+            50% { box-shadow: 0 0 35px rgba(5, 215, 218, 0.25); }
+        }
+
+        .hud {
+            position: absolute;
+            bottom: max(24px, env(safe-area-inset-bottom, 24px));
+            left: 24px;
+            font-size: 10px;
+            color: rgba(224, 230, 237, 0.38);
+            z-index: 6;
+            letter-spacing: 0.5px;
+            text-transform: capitalize;
+            opacity: 0.38;
+            pointer-events: none;
+            display: none;
+        }
+
+        @media (min-width: 480px) { .hud { display: block; } }
+
+        #scrollHint {
+            position: absolute;
+            bottom: max(40px, env(safe-area-inset-bottom, 40px));
+            left: 50%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .hint-label {
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            text-transform: capitalize;
+            color: rgba(247, 248, 250, 0.55);
+            font-family: var(--font-body);
+        }
+
+        .hint-chevrons span {
+            display: block;
+            width: 12px;
+            height: 14px;
+            border-right: 1px solid rgba(224, 230, 237, 0.3);
+            border-bottom: 1px solid rgba(224, 230, 237, 0.3);
+            transform: rotate(45deg);
+        }
+
+        #screen2 {
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            opacity: 0;
+            pointer-events: none;
+            background: var(--bg);
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+
+        .fixed-controls {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 600;
+            pointer-events: none;
+        }
+
+        #backBtn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: transparent;
+            border: none;
+            color: rgba(224, 230, 237, 0.38);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: lowercase;
+            cursor: pointer;
+            padding: 10px;
+            transition: color 0.3s;
+            pointer-events: auto;
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        #backBtn:hover { color: var(--petrol); }
+
+        #staff-nav {
+            position: fixed; 
+            top: 20px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 1200px;
+            z-index: 2000;
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            padding: 15px 30px !important;
+            min-height: 60px;
+            background: rgba(5, 5, 12, 0.55);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 40px;
+            pointer-events: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .nav-logo {
+            font-family: var(--font-title);
+            font-size: 20px; 
+            font-weight: 700; 
+            letter-spacing: 1.5px;
+            color: var(--petrol); 
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex; gap: 28px;
+            background: transparent;
+            padding: 10px 24px;
+        }
+
+        #staff-nav a {
+            color: rgba(255,255,255,0.95);
+            text-decoration: none;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px; 
+            font-weight: 400;
+            letter-spacing: 0.5px; 
+            text-transform: capitalize;
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        #staff-nav a:hover { color: var(--petrol); }
+
+        .video-section {
+            position: relative;
+            width: 100vw;
+            height: 100dvh;
+            min-height: 100vh;
+            overflow: hidden;
+            background: #000;
+        }
+
+        #bgVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .video-section { height: 100dvh; }
+            #bgVideo {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
+            }
+        }
+
+        .video-gradient-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 28vh;
+            background: linear-gradient(to bottom, transparent, var(--bg-deep));
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .staff-section {
+            position: relative;
+            min-height: 100vh;
+            background: radial-gradient(circle at 50% 0%, var(--bg-deep) 0%, #000 100%);
+            padding: clamp(40px, 5vh, 80px) clamp(16px, 2%, 40px) clamp(80px, 12vh, 150px);
+            z-index: 10;
+        }
+
+        .agency-description {
+            text-align: center;
+            margin-bottom: clamp(30px, 5vh, 60px);
+            padding: 0 clamp(0px, 2%, 20px);
+        }
+
+        .agency-description h2 {
+            font-family: var(--font-title);
+            font-size: clamp(36px, 6vw, 90px);
+            font-weight: 600;
+            margin: 0 0 25px 0;
+            color: #E0E6ED;
+            letter-spacing: 1px;
+            text-shadow: none;
+        }
+
+        .agency-description p {
+            font-family: var(--font-body);
+            font-weight: 300;
+            font-size: clamp(15px, 1.4vw, 21px);
+            color: rgba(224, 230, 237, 0.68);
+            max-width: 780px;
+            margin: 0 auto;
+            line-height: 1.6;
+            padding: 0 clamp(14px, 3%, 30px);
+        }
+
+        .staff-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: clamp(10px, 2vw, 20px);
+            max-width: 1400px;
+            margin: 0 auto;
+            perspective: 1400px;
+        }
+
+        .row-break {
+            flex-basis: 100%;
+            height: 0;
+        }
+
+        .celestial-card {
+            width: clamp(220px, 28vw, 300px);
+            height: clamp(340px, 42vw, 460px);
+            position: relative;
+            transform-style: preserve-3d;
+            cursor: crosshair;
+            flex-shrink: 0;
+        }
+
+        .celestial-card::before {
+            content: '';
+            position: absolute;
+            inset: -14px;
+            border-radius: 50%;
+            border: 1px solid rgba(245, 166, 35, 0.1);
+            border-top: 1px solid rgba(245, 166, 35, 0.65);
+            border-bottom: 1px solid rgba(142, 68, 173, 0.2);
+            transform: translateZ(-50px) rotateX(60deg) scale(1.1);
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+            box-shadow: 0 0 28px rgba(245, 166, 35, 0.40);
+        }
+
+        .celestial-card:hover::before {
+            opacity: 1;
+            transform: translateZ(-20px) rotateX(55deg) scale(1.2);
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: rgba(10, 5, 0, 0.82);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), inset 0 0 0 1px rgba(245, 166, 35, 0.1);
+            transform-style: preserve-3d;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 70%;
+            background-size: cover;
+            background-position: center top;
+            filter: grayscale(78%) sepia(18%) hue-rotate(330deg) brightness(0.7);
+            transition: filter 0.55s ease;
+            position: relative;
+        }
+
+        .celestial-card:hover .card-image {
+            filter: grayscale(0%) brightness(1.1);
+        }
+
+        .card-glare {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(245, 166, 35, 0.2), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.28s;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+        }
+
+        .celestial-card:hover .card-glare { opacity: 1; }
+
+        .card-info {
+            height: 30%;
+            padding: clamp(12px, 2vh, 20px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to top, rgba(0, 0, 0, 1), transparent);
+            border-top: 1px solid rgba(196, 179, 168, 0.38);
+            text-align: center;
+            transform: translateZ(28px);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .slide-title {
+            font-family: var(--font-garamond);
+            font-size: clamp(18px, 2.2vw, 24px);
+            font-weight: 600;
+            color: #E0E6ED;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+            text-shadow: none;
+        }
+
+        .slide-name {
+            font-family: var(--font-body);
+            font-size: clamp(12px, 1.3vw, 15px);
+            font-weight: 400;
+            color: rgba(245, 166, 35, 0.85);
+        }
+
+        @media (max-width: 600px) {
+            #staff-nav { padding: 10px 14px; flex-direction: column; gap: 15px; }
+            .nav-links { gap: 14px; padding: 8px 14px; flex-wrap: wrap; justify-content: center; }
+            #staff-nav a { font-size: 14px; }
+            
+            .fixed-controls { display: flex; flex-direction: column; align-items: stretch; }
+            #backBtn { position: static; align-self: flex-start; padding: 12px 16px; }
+            
+            .staff-grid { flex-direction: column; align-items: center; gap: 20px; }
+            .row-break { display: none; }
+            
+            .celestial-card { width: min(82vw, 300px); height: 400px; }
+            .celestial-card::before { display: none; }
+            .card-inner { transform-style: flat !important; }
+            .card-info { transform: none !important; }
+            .card-image { filter: grayscale(15%) brightness(0.85); }
+            .agency-description p { border: none; padding: 0 4px; background: none; }
+            .agency-description h2 { font-size: 28px !important; margin-bottom: 15px !important; }
+            
+            /* Optimización mobile: desactivar transformaciones costosas */
+            .celestial-card { will-change: auto; transition: none !important; }
+            .celestial-card:hover { transform: none !important; }
+            .card-image { transition: none !important; }
+            .card-glare { display: none; }
+        }
+
+        @media (max-width: 360px) {
+            .word-infinita { font-size: 2.2rem; }
+            .word-creatividad { font-size: 1.8rem; }
+            .word-adaptabilidad { font-size: 1.4rem; }
+            #spaceBtn { letter-spacing: 0.2em; padding: 14px 18px; font-size: 10px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #spaceBtn.clickable { animation: none !important; }
+            .celestial-card::before { display: none; }
+            .card-image { filter: grayscale(0%) brightness(0.9); transition: none; }
+        }
+
+        @media (max-height: 500px) and (orientation: landscape) {
+            .word-infinita, .word-creatividad, .word-adaptabilidad { font-size: 14vh; }
+            #spaceBtn { font-size: 10px; padding: 10px 20px; }
+            .hud { display: none; }
+        }
+
+        #screen2 { opacity: 1 !important; pointer-events: auto !important; position: fixed !important; z-index: 10 !important; }
+        body { background: var(--bg); overflow-y: scroll !important; }
+        #transitionOverlay { display: none !important; }
+
+        .celestial-card { transition: transform 0.08s linear; will-change: transform; }
+        .celestial-card .card-inner { transition: transform 0.08s linear, box-shadow 0.3s ease; }
+        
+        /* Optimización global: reducir repaints */
+        * { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+
+        @media (max-width: 768px) {
+            #staff-nav { min-height: 60px !important; padding: 10px 12px !important; }
+            .nav-links { display: flex !important; flex-wrap: nowrap !important; gap: 8px !important; justify-content: center !important; width: 100%; }
+            #staff-nav a { font-size: 0.85rem !important; padding: 8px 4px !important; white-space: nowrap !important; text-align: center; }
+        }
+
+        .staff-section, .agency-description, .portfolio-grid, .portfolio-mobile-grid, .ugc-section, .brand-section, .comercial-section, .eventos-section, .contacto-section, main {
+            padding-top: 100px !important; margin-top: 0 !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="transitionOverlay" aria-hidden="true"></div>
+
+    <div id="screen2" role="region" aria-label="Contenido principal">
+
+        <nav id="staff-nav" role="navigation" aria-label="Menú principal">
+            <div class="nav-logo">NYLON</div>
+            <div class="nav-links">
+                <a href="index.html#main-video">Inicio</a>
+                <a href="servicios.html">Servicios</a>
+                <a href="portfolio.html">Portfolio</a>
+                <a href="contacto.html">Contacto</a>
+            </div>
+        </nav>
+
+        <section class="staff-section" id="menu" aria-label="Agencia y equipo">
+            <div class="agency-description">
+                <h2>Nylon</h2>
+                <p>
+                    No creemos en las estructuras rígidas, sino en las que fluyen y se transforman.
+                    Al igual que el nylon, nuestra esencia es la adaptabilidad. Somos una agencia audiovisual
+                    que entiende que cada marca tiene una forma, un peso y una textura diferente. No imponemos
+                    un molde; nos amoldamos a tu visión para potenciarla. Aprendimos que el secreto no está
+                    en saber grabar, sino en saber escuchar. Ofrecemos soluciones de impacto para destacar
+                    tu identidad dentro del ecosistema digital, sin perder la esencia.
+                </p>
+            </div>
+
+            <div class="staff-grid">
+                <!-- Fila 1: 3 Integrantes -->
+                <div class="celestial-card" aria-label="Natalia Garaygorta">
+                    <div class="card-inner">
+                        <div class="card-image" style="background-image: url('fotos/naty.jpeg');" role="img" aria-label="Foto de Natalia Garaygorta">
+                            <div class="card-glare" aria-hidden="true"></div>
+                        </div>
+                        <div class="card-info">
+                            <div class="slide-title">Natalia Garaygorta</div>
+                            <div class="slide-name">Project Manager – CM – Host</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="celestial-card" aria-label="Laura González">
+                    <div class="card-inner">
+                        <div class="card-image" style="background-image: url('fotos/lau.jpeg');" role="img" aria-label="Foto de Laura González">
+                            <div class="card-glare" aria-hidden="true"></div>
+                        </div>
+                        <div class="card-info">
+                            <div class="slide-title">Laura González</div>
+                            <div class="slide-name">Filmmaker – Editora de Video</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="celestial-card" aria-label="Matías Molinero">
+                    <div class="card-inner">
+                        <div class="card-image" style="background-image: url('fotos/Moli.jpg');" role="img" aria-label="Foto de Matías Molinero">
+                            <div class="card-glare" aria-hidden="true"></div>
+                        </div>
+                        <div class="card-info">
+                            <div class="slide-title">Matías Molinero</div>
+                            <div class="slide-name">Drone Pilot – Editor</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Salto de fila -->
+                <div class="row-break" aria-hidden="true"></div>
+
+                <!-- Fila 2: 4 Integrantes -->
+                <div class="celestial-card" aria-label="María Lahoz">
+                    <div class="card-inner">
+                        <div class="card-image" style="background-image: url('fotos/Maru.jpg');" role="img" aria-label="Foto de María Lahoz">
+                            <div class="card-glare" aria-hidden="true"></div>
+                        </div>
+                        <div class="card-info">
+                            <div class="slide-title">María Lahoz</div>
+                            <div class="slide-name">Fotógrafa</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="celestial-card" aria-label="Rocío Abbadesa">
+                    <div class="card-inner">
+                        <div class="card-image" style="background-image: url('fotos/cmb.png');" role="img" aria-label="Foto de Rocío Abbadesa">
+                            <div class="card-glare" aria-hidden="true"></div>
+                        </div>
+                        <div class="card-info">
+                            <div class="slide-title">Rocío Abbadesa</div>
+                            <div class="slide-name">Community Manager</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="celestial-card" aria-label="Joel Vargas">
+                    <div class="card-inner">
+                        <div class="card-image" style="background-image: url('fotos/paid.png');" role="img" aria-label="Foto de Joel Vargas">
+                            <div class="card-glare" aria-hidden="true"></div>
+                        </div>
+                        <div class="card-info">
+                            <div class="slide-title">Joel Vargas</div>
+                            <div class="slide-name">Paid Media Specialist</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="celestial-card" aria-label="Natalia Gonzalez">
+                    <div class="card-inner">
+                        <!-- Ajuste de background-size para la foto de Natalia -->
+                        <div class="card-image" style="background-image: url('fotos/web.png');" role="img" aria-label="Foto de Natalia Gonzalez">
+                            <div class="card-glare" aria-hidden="true"></div>
+                        </div>
+                        <div class="card-info">
+                            <div class="slide-title">Natalia Gonzalez</div>
+                            <div class="slide-name">Web & SEO Specialist</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </div>
+
+    <script>
+        (function () {
+            "use strict";
+
+            const IS_MOBILE = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth <= 768;
+            const IS_TOUCH = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            function whenGSAP(cb) {
+                if (typeof gsap !== 'undefined') cb();
+                else requestAnimationFrame(() => whenGSAP(cb));
+            }
+
+            const canvas = document.getElementById('starfield');
+            const ctx = canvas ? canvas.getContext('2d', { alpha: false }) : null;
+            let W, H, stars = [];
+            let warp = 1, targetWarp = 1, warpTimer;
+            let rafStar, lastTs = 0;
+            let starCount;
+
+            function initStars() {
+                if (!canvas || !ctx) return;
+                W = canvas.width = window.innerWidth;
+                H = canvas.height = window.innerHeight;
+                starCount = IS_MOBILE ? 300 : 900;
+                stars = Array.from({ length: starCount }, () => ({
+                    x: Math.random() * W - W / 2,
+                    y: Math.random() * H - H / 2,
+                    z: Math.random() * W,
+                }));
+            }
+
+            function drawStars(ts) {
+                if (!canvas || !ctx) return;
+                rafStar = requestAnimationFrame(drawStars);
+                const minInterval = IS_MOBILE ? 22 : 14;
+                if (ts - lastTs < minInterval) return;
+                lastTs = ts;
+
+                warp += (targetWarp - warp) * 0.10;
+
+                ctx.fillStyle = 'rgba(0, 5, 16, 0.28)';
+                ctx.fillRect(0, 0, W, H);
+                ctx.fillStyle = '#FFFFFF';
+
+                for (const s of stars) {
+                    s.z -= warp;
+                    if (s.z <= 0) {
+                        s.x = Math.random() * W - W / 2;
+                        s.y = Math.random() * H - H / 2;
+                        s.z = W;
+                    }
+                    const sx = W / 2 + (s.x / s.z) * W;
+                    const sy = H / 2 + (s.y / s.z) * W;
+                    const r = Math.max(0, (1 - s.z / W) * 2.6);
+                    if (r < 0.05) continue;
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, r, 0, 6.2832);
+                    ctx.fill();
+                }
+            }
+
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    cancelAnimationFrame(rafStar);
+                } else {
+                    lastTs = 0;
+                    rafStar = requestAnimationFrame(drawStars);
+                }
+            });
+
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(initStars, 150);
+            }, { passive: true });
+
+            initStars();
+            rafStar = requestAnimationFrame(drawStars);
+
+            window.addEventListener('load', () => {
+                const bgVideo = document.getElementById('bgVideo');
+                if(!bgVideo) return;
+                
+                function loadMainVideo() {
+                    if (bgVideo.src) return;
+                    const videoSource = IS_MOBILE ? 'videos/portada_movil.mp4' : 'videos/portada.mp4';
+                    bgVideo.src = videoSource;
+                    bgVideo.load();
+                    bgVideo.addEventListener('canplaythrough', () => {
+                        bgVideo.play().catch(e => console.log("Autoplay prevenido", e));
+                    }, { once: true });
+                }
+
+                if (window.location.hash === '#main-video' || window.location.hash === '#menu') {
+                    loadMainVideo();
+                } else {
+                    setTimeout(loadMainVideo, 2000);
+                }
+            });
+
+            function lazyLoadImages() {
+                const images = document.querySelectorAll('.card-image[data-bg]');
+                if ('IntersectionObserver' in window) {
+                    const io = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const el = entry.target;
+                                el.style.backgroundImage = `url('${el.dataset.bg}')`;
+                                io.unobserve(el);
+                            }
+                        });
+                    }, { rootMargin: '200px' });
+                    images.forEach(img => io.observe(img));
+                } else {
+                    images.forEach(img => { img.style.backgroundImage = `url('${img.dataset.bg}')`; });
+                }
+            }
+            lazyLoadImages();
+
+            whenGSAP(() => {
+                const overlay = document.getElementById('transitionOverlay') || document.createElement('div');
+                const screen2 = document.getElementById('screen2') || document.createElement('div');
+                const btn = document.getElementById('spaceBtn') || document.createElement('div');
+                const backBtn = document.getElementById('backBtn') || document.createElement('div');
+                const bgVideo = document.getElementById('bgVideo') || { play: ()=>Promise.resolve(), pause: ()=>{}, currentTime: 0 };
+                const logoImg = document.querySelector('.nylon-logo-img') || document.createElement('img');
+                const scrollHint = document.getElementById('scrollHint') || document.createElement('div');
+                const wordIds = ['infinita', 'creatividad', 'adaptabilidad'];
+
+                const hintLabel = document.querySelector('.hint-label');
+                if (hintLabel) {
+                    hintLabel.textContent = IS_TOUCH ? 'toca' : 'scroll';
+                }
+
+                gsap.set(btn, { xPercent: -50, yPercent: -50, scale: 0.1 });
+                gsap.set(scrollHint, { xPercent: -50 });
+                wordIds.forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) gsap.set(el, { xPercent: -50, yPercent: -50, scale: 0.005, opacity: 0 });
+                });
+
+                if (!reducedMotion) {
+                    gsap.to(scrollHint, { y: 10, duration: 1.8, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+                    [1, 2, 3].forEach((_, i) => {
+                        const c = document.getElementById('chev' + (i + 1));
+                        if(c) gsap.fromTo(c, { opacity: 0.15 }, { opacity: 1, duration: 0.55, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: i * 0.22 });
+                    });
+                }
+
+                let wheelCount = 0, sequenceStarted = false;
+
+                function startSequence() {
+                    if (sequenceStarted) return;
+                    sequenceStarted = true;
+                    document.body.style.overflow = 'hidden';
+
+                    gsap.to(scrollHint, {
+                        opacity: 0, y: 20, duration: 0.45, ease: 'power2.in',
+                        onComplete: () => { scrollHint.style.display = 'none'; }
+                    });
+
+                    const master = gsap.timeline();
+
+                    if(logoImg.parentNode) master.to(logoImg, { scale: 34, opacity: 0, duration: 1.1, ease: 'power2.in' }, 0);
+
+                    let cursor = 0.9;
+                    wordIds.forEach(id => {
+                        const el = document.getElementById(id);
+                        if(el) {
+                            master.set(el, { scale: 0.005, opacity: 0, webkitTextStroke: '2px rgba(5, 215, 218, 0)' }, cursor);
+                            master.to(el, { scale: 1, opacity: 1, webkitTextStroke: '2.5px rgba(5, 215, 218, 1)', duration: 0.8, ease: 'power2.out' }, cursor);
+                            cursor += 1.8;
+                            master.to(el, { scale: 16, opacity: 0, webkitTextStroke: '2.5px rgba(5, 215, 218, 0)', duration: 0.62, ease: 'power2.in' }, cursor);
+                            cursor += 0.85;
+                        }
+                    });
+
+                    master.to(btn, {
+                        scale: 1, opacity: 1, duration: 0.9, ease: 'power2.out',
+                        onComplete: () => {
+                            btn.classList.add('clickable');
+                            document.body.style.overflow = '';
+                        }
+                    }, cursor);
+                }
+
+                function onInput() {
+                    targetWarp = 28;
+                    clearTimeout(warpTimer);
+                    warpTimer = setTimeout(() => { targetWarp = 1; }, 160);
+                    if (!sequenceStarted) {
+                        wheelCount++;
+                        if (wheelCount >= 2) startSequence();
+                    }
+                }
+
+                let touchCount = 0;
+                window.addEventListener('touchmove', () => {
+                    targetWarp = 18;
+                    clearTimeout(warpTimer);
+                    warpTimer = setTimeout(() => { targetWarp = 1; }, 160);
+                    if (!sequenceStarted) {
+                        touchCount++;
+                        if (touchCount >= 1) startSequence();
+                    }
+                }, { passive: true });
+
+                if (IS_MOBILE || IS_TOUCH) {
+                    const hero = document.getElementById('hero');
+                    if (hero) {
+                        hero.addEventListener('click', () => {
+                            if (!sequenceStarted) startSequence();
+                        }, { passive: true });
+                    }
+                }
+
+                window.addEventListener('wheel', onInput, { passive: true });
+
+                function launchLanding() {
+                    btn.classList.remove('clickable');
+                    btn.style.pointerEvents = 'none';
+                    targetWarp = 90;
+
+                    const landing = gsap.timeline();
+
+                    landing.to(overlay, {
+                        opacity: 0.94, duration: 1.5, ease: 'power2.in',
+                        onStart: () => {
+                            overlay.style.background = 'radial-gradient(ellipse at center, rgba(241,106,106,0.8) 0%, rgba(40,229,223,0.82) 55%, rgba(253,253,253,1) 100%)';
+                        }
+                    });
+                    landing.to(overlay, {
+                        background: 'radial-gradient(ellipse at center, rgba(226,125,0,0.50) 0%, rgba(3,136,156,0.67) 55%, rgba(255,255,255,0.90) 100%)',
+                        duration: 0.75, ease: 'power1.inOut'
+                    });
+                    landing.to(overlay, {
+                        background: 'rgba(225,255,255,0.98)', duration: 0.55, ease: 'power2.in'
+                    });
+                    landing.call(() => {
+                        targetWarp = 0.1;
+                        gsap.set(screen2, { opacity: 1, pointerEvents: 'auto' });
+                        screen2.scrollTo(0, 0);
+                        bgVideo.currentTime = 0;
+                        bgVideo.play().catch(() => { });
+                    });
+                    landing.to(overlay, {
+                        opacity: 0, duration: 2.8, ease: 'power1.out',
+                        onComplete: () => { overlay.style.pointerEvents = 'none'; }
+                    });
+                }
+
+                if (btn.parentNode) {
+                    btn.addEventListener('click', launchLanding);
+                }
+
+                if (backBtn && backBtn.parentNode) {
+                    backBtn.addEventListener('click', () => {
+                        const returnFlight = gsap.timeline();
+                        returnFlight.to(overlay, {
+                            opacity: 1, background: 'rgba(0,0,20,0.98)', duration: 1.3, ease: 'power2.in',
+                            onStart: () => { overlay.style.pointerEvents = 'none'; }
+                        });
+                        returnFlight.call(() => {
+                            gsap.set(screen2, { opacity: 0, pointerEvents: 'none' });
+                            bgVideo.pause();
+                            targetWarp = 28;
+                            setTimeout(() => {
+                                btn.classList.add('clickable');
+                                btn.style.pointerEvents = '';
+                            }, 1100);
+                        });
+                        returnFlight.to(overlay, {
+                            opacity: 0, duration: 2.0, ease: 'power2.out',
+                            onComplete: () => { targetWarp = 1; }
+                        });
+                    });
+                }
+
+                if (window.location.hash === '#main-video' || window.location.hash === '#menu') {
+                    gsap.set(overlay, { opacity: 1, background: 'rgba(225,255,255,0.98)' });
+                    targetWarp = 0.1;
+                    gsap.set(screen2, { opacity: 1, pointerEvents: 'auto' });
+                    bgVideo.currentTime = 0;
+                    bgVideo.play().catch(() => { });
+                    gsap.to(overlay, { opacity: 0, duration: 1.5, ease: 'power1.out', delay: 0.2 });
+                }
+
+                /* MAGIA 3D DE LAS TARJETAS */
+                if (!reducedMotion && !IS_TOUCH && window.innerWidth > 600) {
+                    const MAX_TILT = 13;
+                    const LIFT_Z   = 16;
+                    const SHADOW_ON  = '0 32px 64px rgba(0,0,0,0.95), 0 0 36px rgba(245,166,35,0.18), inset 0 0 0 1px rgba(245,166,35,0.22)';
+                    const SHADOW_OFF = '0 20px 50px rgba(0,0,0,0.9), inset 0 0 0 1px rgba(245,166,35,0.1)';
+
+                    document.querySelectorAll('.celestial-card').forEach(card => {
+                        const inner = card.querySelector('.card-inner');
+                        const glare = card.querySelector('.card-glare');
+
+                        card.addEventListener('mousemove', e => {
+                            const r  = card.getBoundingClientRect();
+                            const nx = ((e.clientX - r.left) / r.width  - 0.5) * 2;
+                            const ny = ((e.clientY - r.top)  / r.height - 0.5) * 2;
+                            inner.style.transform  = `rotateX(${-ny * MAX_TILT}deg) rotateY(${nx * MAX_TILT}deg) translateZ(${LIFT_Z}px)`;
+                            inner.style.boxShadow  = SHADOW_ON;
+                            if (glare) {
+                                glare.style.background = `radial-gradient(circle at ${((nx+1)/2*100).toFixed(1)}% ${((ny+1)/2*100).toFixed(1)}%, rgba(245,166,35,0.26), transparent 58%)`;
+                                glare.style.opacity    = Math.min(0.85, 0.35 + (Math.abs(nx) + Math.abs(ny)) * 0.22) + '';
+                            }
+                        });
+
+                        card.addEventListener('mouseleave', () => {
+                            inner.style.transform = 'rotateX(0deg) rotateY(0deg) translateZ(0px)';
+                            inner.style.boxShadow = SHADOW_OFF;
+                            if (glare) { glare.style.opacity = '0'; }
+                        });
+                    });
+                }
+
+                if (IS_TOUCH) {
+                    document.querySelectorAll('.celestial-card').forEach(card => {
+                        const inner = card.querySelector('.card-inner');
+                        card.addEventListener('touchstart', () => {
+                            inner.style.transition = 'transform 0.12s ease, box-shadow 0.12s ease';
+                            inner.style.transform  = 'scale(0.97) translateZ(-6px)';
+                            inner.style.boxShadow  = '0 8px 24px rgba(0,0,0,0.95)';
+                        }, { passive: true });
+                        card.addEventListener('touchend', () => {
+                            inner.style.transform = 'scale(1) translateZ(0px)';
+                            inner.style.boxShadow = '0 20px 50px rgba(0,0,0,0.9), inset 0 0 0 1px rgba(245,166,35,0.1)';
+                        }, { passive: true });
+                    });
+                }
+
+            });
+
+        })();
+    </script>
+</body>
+
+</html>

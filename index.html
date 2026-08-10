@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>NYLON | Producción Audiovisual y Diseño Web Inmersivo</title>
+    <meta name="description" content="Agencia Nylon. Especialistas en producción audiovisual, coberturas con drones y desarrollo web experiencias web inmersivas y 3D.">
+
+    <!-- Importación estricta de tipografías híbridas + Audiowide -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Cormorant+Garamond:wght@400;600;700&family=Playfair+Display:wght@400;600;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Preload de assets críticos -->
+    <link rel="preload" href="fotos/logo.png" as="image" fetchpriority="high">
+    <link rel="preload" href="js/performance-utils.js" as="script" fetchpriority="high">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" as="script" fetchpriority="high">
+
+    <!-- GSAP con defer: no bloquea el parser HTML -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    
+    <!-- Performance Utilities - Optimización global -->
+    <script src="js/performance-utils.js" defer></script>
+
+    <style>
+        /* ══════════════════════════════════════════
+           VARIABLES
+        ══════════════════════════════════════════ */
+        :root {
+            --petrol: #209180;
+            --petrol-muted: rgba(32, 145, 128, 0.3);
+            --amber: #F5A623;
+            --purple-warm: rgba(142, 68, 173, 0.2);
+            --bg-deep: #000510;
+            --bg: #000510;
+            --card-bg: rgba(10, 15, 25, 0.6);
+            /* Variables Tipográficas Nylon */
+            --font-heading: 'Playfair Display', serif;
+            --font-subheading: 'Cormorant Garamond', serif;
+            --font-tech: 'Space Grotesk', sans-serif;
+            --font-audiowide: 'Audiowide', cursive;
+        }
+
+        /* ══════════════════════════════════════════
+           RESET
+        ══════════════════════════════════════════ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-tech);
+            font-weight: 300;
+            letter-spacing: 0.03em;
+        }
+
+        html {
+            scroll-behavior: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--petrol) var(--bg);
+        }
+
+        body {
+            background: var(--bg);
+            color: #E0E6ED;
+            font-family: var(--font-tech);
+            font-weight: 300;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            letter-spacing: 0.03em;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--petrol);
+            border-radius: 3px;
+        }
+
+        /* ══════════════════════════════════════════
+           OVERLAY DE TRANSICIÓN
+        ══════════════════════════════════════════ */
+        #transitionOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            will-change: opacity;
+        }
+
+        /* ══════════════════════════════════════════
+           PANTALLA 1 — HERO ESPACIAL
+        ══════════════════════════════════════════ */
+        .hero {
+            position: relative;
+            width: 100vw;
+            height: 100dvh;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #000;
+            z-index: 1;
+        }
+
+        #starfield {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            will-change: transform;
+        }
+
+        .nylon-logo-wrap {
+            position: absolute;
+            z-index: 3;
+            left: 50%;
+            top: 50%;
+            will-change: transform, opacity;
+        }
+
+        .nylon-logo-img {
+            width: clamp(220px, 72vw, 960px);
+            display: block;
+            mix-blend-mode: screen;
+            filter: brightness(1.05) contrast(1.1);
+            pointer-events: none;
+            user-select: none;
+            transform-origin: center center;
+            will-change: transform, opacity;
+        }
+
+        /* Palabras flotantes con Audiowide */
+        .space-word {
+            position: absolute;
+            z-index: 4;
+            left: 50%;
+            top: 50%;
+            transform-origin: center center;
+            pointer-events: none;
+            user-select: none;
+            font-family: var(--font-audiowide); /* Tipografía actualizada */
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: transparent;
+            white-space: nowrap;
+            will-change: transform, opacity;
+            opacity: 0;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.25), 0 0 30px rgba(255, 255, 255, 0.12);
+        }
+
+        .word-infinita { font-size: clamp(2.5rem, 13vw, 12rem); }
+        .word-creatividad { font-size: clamp(2rem, 10vw, 9rem); }
+        .word-adaptabilidad { font-size: clamp(1.5rem, 7.5vw, 7rem); }
+
+        /* ══════════════════════════════════════════
+           BOTÓN CTA
+        ══════════════════════════════════════════ */
+        #spaceBtn {
+            position: absolute;
+            z-index: 8;
+            left: 50%;
+            top: 50%;
+            will-change: transform, opacity;
+            opacity: 0;
+            pointer-events: none;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(200, 235, 255, 0.5);
+            color: #ffffff;
+            font-family: var(--font-tech);
+            font-size: clamp(13px, 1.5vw, 16px);
+            font-weight: 400;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            padding: clamp(16px, 2.5vh, 20px) clamp(30px, 5vw, 60px);
+            white-space: nowrap;
+            cursor: pointer;
+            outline: none;
+            border-radius: 0;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 25px rgba(180, 225, 255, 0.15), inset 0 0 15px rgba(255, 255, 255, 0.05);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            transition: all 0.4s ease;
+            min-height: 44px;
+        }
+
+        #spaceBtn:active {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            box-shadow: none;
+        }
+
+        @media (max-width: 768px) {
+            #spaceBtn { min-height: 52px; letter-spacing: 4px; }
+        }
+
+        #spaceBtn.clickable {
+            pointer-events: auto;
+            animation: btnPulse 4s ease-in-out infinite;
+        }
+
+        #spaceBtn.clickable:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            border-color: #ffffff;
+            box-shadow: 0 0 40px rgba(180, 225, 255, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.15);
+            text-shadow: 0 0 15px #ffffff;
+            animation: none;
+        }
+
+        @keyframes btnPulse {
+            0%, 100% { 
+                box-shadow: 0 0 25px rgba(180, 225, 255, 0.15), inset 0 0 15px rgba(255, 255, 255, 0.05); 
+            }
+            50% { 
+                box-shadow: 0 0 45px rgba(180, 225, 255, 0.35), inset 0 0 25px rgba(255, 255, 255, 0.12); 
+            }
+        }
+
+        /* HUD coords */
+        .hud {
+            position: absolute;
+            bottom: max(24px, env(safe-area-inset-bottom, 24px));
+            left: 24px;
+            font-size: 10px;
+            font-family: var(--font-tech);
+            color: rgba(224, 230, 237, 0.38);
+            z-index: 6;
+            letter-spacing: 0.5px;
+            text-transform: capitalize;
+            opacity: 0.38;
+            pointer-events: none;
+            display: none;
+        }
+
+        @media (min-width: 480px) {
+            .hud { display: block; }
+        }
+
+        /* ══════════════════════════════════════════
+           SCROLL HINT - AHORA MÁS GRANDE Y BRILLANTE
+        ══════════════════════════════════════════ */
+        #scrollHint {
+            position: absolute;
+            bottom: max(40px, env(safe-area-inset-bottom, 40px));
+            left: 50%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .hint-label {
+            font-family: var(--font-tech);
+            font-size: 16px; /* Aumentado */
+            font-weight: 700; /* Más sólido */
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #ffffff; /* Blanco puro */
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.9); /* Resplandor */
+        }
+
+        .hint-chevrons span {
+            display: block;
+            width: 18px; /* Aumentado */
+            height: 20px; /* Aumentado */
+            border-right: 3px solid #ffffff; /* Borde grueso y blanco */
+            border-bottom: 3px solid #ffffff;
+            transform: rotate(45deg);
+            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8)); /* Brillo en las flechas */
+        }
+
+        /* ══════════════════════════════════════════
+           PANTALLA 2 — VIDEO + STAFF
+        ══════════════════════════════════════════ */
+        #screen2 {
+            position: fixed;
+            inset: 0;
+            z-index: 500;
+            opacity: 0;
+            pointer-events: none;
+            background: var(--bg);
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+        }
+
+        /* NAV FLOTANTE UNIFICADO */
+        #staff-nav {
+            position: fixed; 
+            top: 20px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: 92%;
+            max-width: 1200px;
+            z-index: 2000;
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+            padding: 15px 30px !important;
+            min-height: 60px;
+            background: rgba(5, 5, 12, 0.55);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 40px;
+            pointer-events: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+        .nav-logo {
+            font-family: var(--font-heading);
+            font-size: 20px; font-weight: 700; letter-spacing: 2px;
+            color: var(--petrol); text-transform: uppercase;
+        }
+        .nav-links {
+            display: flex; gap: 28px;
+            background: transparent;
+            padding: 10px 24px;
+        }
+        #staff-nav a {
+            color: rgba(255,255,255,0.95); text-decoration: none;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px; font-weight: 400; letter-spacing: 2px; text-transform: capitalize;
+            transition: color 0.3s, text-shadow 0.3s; position: relative;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.9);
+        }
+        #staff-nav a::before, #staff-nav a::after {
+            position: absolute; opacity: 0; transition: all 0.3s; color: #1fa694;
+        }
+        #staff-nav a::before { content: '['; left: -10px; }
+        #staff-nav a::after  { content: ']'; right: -10px; }
+        #staff-nav a:hover { color: #1fa694; text-shadow: 0 0 12px rgba(31,166,148,0.7); }
+        #staff-nav a:hover::before { opacity: 1; left: -13px; }
+        #staff-nav a:hover::after  { opacity: 1; right: -13px; }
+
+        /* ── SECCIÓN VIDEO ── */
+        .video-section {
+            position: relative;
+            width: 100vw;
+            height: 100dvh;
+            min-height: 100vh;
+            overflow: hidden;
+            background: #000;
+        }
+
+        #bgVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .video-section { height: 100dvh; }
+            #bgVideo {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center;
+            }
+        }
+
+        .video-gradient-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 28vh;
+            background: linear-gradient(to bottom, transparent, var(--bg-deep));
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* ── SECCIÓN STAFF ── */
+        .staff-section {
+            position: relative;
+            min-height: 100vh;
+            background: radial-gradient(circle at 50% 0%, var(--bg-deep) 0%, #000 100%);
+            padding: clamp(40px, 5vh, 80px) clamp(16px, 2%, 40px) clamp(80px, 12vh, 150px);
+            z-index: 10;
+        }
+
+        .agency-description {
+            text-align: center;
+            margin-bottom: clamp(30px, 5vh, 60px);
+            padding: 0 clamp(0px, 2%, 20px);
+        }
+
+        .agency-description h2 {
+            font-family: var(--font-heading);
+            font-size: clamp(36px, 6vw, 90px);
+            font-weight: 700;
+            margin: 0 0 25px 0;
+            color: #E0E6ED;
+            letter-spacing: 2px;
+            text-shadow: none;
+        }
+
+        .agency-description p {
+            font-family: var(--font-tech);
+            font-weight: 300;
+            font-size: clamp(15px, 1.4vw, 21px);
+            color: rgba(224, 230, 237, 0.68);
+            max-width: 780px;
+            margin: 0 auto;
+            line-height: 1.6;
+            padding: 0 clamp(14px, 3%, 30px);
+        }
+
+        /* ── GRILLA STAFF ── */
+        .staff-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: clamp(10px, 2vw, 20px);
+            justify-items: center;
+            max-width: 900px;
+            margin: 0 auto;
+            perspective: 1400px;
+        }
+
+        .celestial-card {
+            width: clamp(220px, 28vw, 300px);
+            height: clamp(340px, 42vw, 460px);
+            position: relative;
+            transform-style: preserve-3d;
+            cursor: crosshair;
+            flex-shrink: 0;
+        }
+
+        .celestial-card::before {
+            content: '';
+            position: absolute;
+            inset: -14px;
+            border-radius: 50%;
+            border: 1px solid rgba(245, 166, 35, 0.1);
+            border-top: 1px solid rgba(245, 166, 35, 0.65);
+            border-bottom: 1px solid rgba(142, 68, 173, 0.2);
+            transform: translateZ(-50px) rotateX(60deg) scale(1.1);
+            opacity: 0;
+            transition: opacity 0.5s, transform 0.5s;
+            box-shadow: 0 0 28px rgba(245, 166, 35, 0.40);
+        }
+
+        .celestial-card:hover::before {
+            opacity: 1;
+            transform: translateZ(-20px) rotateX(55deg) scale(1.2);
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: rgba(10, 5, 0, 0.82);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), inset 0 0 0 1px rgba(245, 166, 35, 0.1);
+            transform-style: preserve-3d;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 70%;
+            background-size: cover;
+            background-position: center top;
+            filter: grayscale(78%) sepia(18%) hue-rotate(330deg) brightness(0.7);
+            transition: filter 0.55s ease;
+            position: relative;
+        }
+
+        .celestial-card:hover .card-image {
+            filter: grayscale(0%) brightness(1.1);
+        }
+
+        .card-glare {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(245, 166, 35, 0.2), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.28s;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+        }
+
+        .celestial-card:hover .card-glare {
+            opacity: 1;
+        }
+
+        .card-info {
+            height: 30%;
+            padding: clamp(12px, 2vh, 20px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to top, rgba(0, 0, 0, 1), transparent);
+            border-top: 1px solid rgba(196, 179, 168, 0.38);
+            text-align: center;
+            transform: translateZ(28px);
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .slide-title {
+            font-family: var(--font-heading);
+            font-size: clamp(15px, 1.8vw, 20px);
+            color: #E0E6ED;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+            text-shadow: none;
+        }
+
+        .slide-name {
+            font-family: var(--font-tech);
+            font-size: clamp(12px, 1.3vw, 16px);
+            font-weight: 400;
+            color: rgba(245, 166, 35, 0.85);
+        }
+
+        /* ══════════════════════════════════════════
+           RESPONSIVE
+        ══════════════════════════════════════════ */
+        @media (max-width: 600px) {
+            #staff-nav { padding: 10px 14px; flex-direction: column; gap: 15px; }
+            .nav-links { gap: 14px; padding: 8px 14px; flex-wrap: wrap; justify-content: center; }
+        #staff-nav a { font-size: 0.75rem !important; padding: 6px 2px !important; white-space: nowrap !important; text-align: center; }
+
+            
+            .staff-grid { grid-template-columns: 1fr; gap: 20px; }
+            .celestial-card { width: min(82vw, 300px); height: 400px; }
+            .celestial-card::before { display: none; }
+            .card-inner { transform-style: flat !important; }
+            .card-info { transform: none !important; }
+            .card-image { filter: grayscale(15%) brightness(0.85); }
+            .agency-description p { border: none; padding: 0 4px; background: none; }
+        }
+
+        @media (max-width: 360px) {
+            .word-infinita { font-size: 2.2rem; }
+            .word-creatividad { font-size: 1.8rem; }
+            .word-adaptabilidad { font-size: 1.4rem; }
+            #spaceBtn { letter-spacing: 0.2em; padding: 14px 18px; font-size: 10px; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #spaceBtn.clickable { animation: none !important; }
+            .celestial-card::before { display: none; }
+            .card-image { filter: grayscale(0%) brightness(0.9); transition: none; }
+        }
+
+        @media (max-height: 500px) and (orientation: landscape) {
+            .word-infinita, .word-creatividad, .word-adaptabilidad { font-size: 14vh; }
+            #spaceBtn { font-size: 10px; padding: 10px 20px; }
+            .hud { display: none; }
+        }
+
+        /* Fix Nav Mobile y Espaciados Globales */
+        @media (max-width: 768px) {
+            #staff-nav { min-height: 60px !important; padding: 10px 12px !important; }
+            .nav-links { display: flex !important; flex-wrap: wrap !important; gap: 4px !important; justify-content: center !important; width: 100%; }
+        #staff-nav a { font-size: 0.75rem !important; padding: 6px 2px !important; white-space: nowrap !important; text-align: center; }
+
+        }
+
+        .staff-section, .agency-description, .portfolio-grid, .portfolio-mobile-grid, .ugc-section, .brand-section, .comercial-section, .eventos-section, .contacto-section, main {
+            padding-top: 100px !important;
+            margin-top: 0 !important;
+        }
+
+        .video-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .video-modal.active {
+            display: flex;
+        }
+
+        .video-modal-content {
+            position: relative;
+            width: min(92vw, 1200px);
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 80px rgba(58, 124, 165, 0.4);
+        }
+
+        .video-modal-player {
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(58, 124, 165, 0.5);
+            color: #fff;
+            font-size: 32px;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            z-index: 10000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .video-modal-close:hover {
+            background: rgba(0, 0, 0, 0.9);
+            border-color: var(--amber);
+            color: var(--amber);
+        }
+    
+    </style>
+</head>
+
+<body>
+    <!-- ── OVERLAY TRANSICIÓN ── -->
+    <div id="transitionOverlay" aria-hidden="true"></div>
+
+    <!-- ══════════════════════════════════════════
+         PANTALLA 2 — VIDEO + STAFF
+    ══════════════════════════════════════════ -->
+    <div id="screen2" role="region" aria-label="Contenido principal">
+        <nav id="staff-nav" role="navigation" aria-label="Menú principal">
+            <div class="nav-logo">NYLON</div>
+            <div class="nav-links">
+                <a href="somos.html">Somos</a>
+                <a href="servicios.html">Servicios</a>
+                <a href="portfolio.html">Portfolio</a>
+                <a href="contacto.html">Contacto</a>
+            </div>
+        </nav>
+
+        <section id="main-video" class="video-section" aria-label="Video reel">
+            <video id="bgVideo" loop muted playsinline preload="none" poster="fotos/poster.jpg" aria-hidden="true"></video>
+            <div class="video-gradient-bottom" aria-hidden="true"></div>
+        </section>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         PANTALLA 1 — HERO ESPACIAL
+    ══════════════════════════════════════════ -->
+    <section class="hero" id="hero" aria-label="Entrada al universo NYLON">
+        <h1 style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;">
+            Agencia Nylon: Producción Audiovisual y Desarrollo de Páginas Web  y Host on Camera y drone 
+        </h1>
+        <canvas id="starfield" aria-hidden="true"></canvas>
+
+        <div class="nylon-logo-wrap" aria-hidden="true">
+            <img class="nylon-logo-img" src="fotos/logo.png" alt="Agencia Audiovisual Nylon - Producción y Diseño" onerror="this.style.display='none'" fetchpriority="high">
+        </div>
+
+        <span class="space-word word-infinita" id="wInfinita" aria-hidden="true">Tus</span>
+        <span class="space-word word-creatividad" id="wIdeas" aria-hidden="true">Ideas</span>
+        <span class="space-word word-creatividad" id="wEn" aria-hidden="true">en</span>
+        <span class="space-word word-adaptabilidad" id="wAdaptabilidad" aria-hidden="true">Movimiento</span>
+
+        <button id="spaceBtn" aria-label="Ingresar al sitio">
+            UNIVERSO NYLON
+        </button>
+
+        <div class="hud" aria-hidden="true">
+            [SYS_ON]<br>COORD: 34.97° S, 58.03° W<br>STATUS: ORBITAL
+        </div>
+
+        <div id="scrollHint" aria-hidden="true">
+            <div class="hint-label">scroll</div>
+            <div class="hint-chevrons">
+                <span id="chev1"></span>
+                <span id="chev2"></span>
+                <span id="chev3"></span>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        (function () {
+            "use strict";
+
+            // Función debounce local para evitar errores de carga
+            function debounce(func, wait, immediate) {
+                var timeout;
+                return function() {
+                    var context = this, args = arguments;
+                    var later = function() {
+                        timeout = null;
+                        if (!immediate) func.apply(context, args);
+                    };
+                    var callNow = immediate && !timeout;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                    if (callNow) func.apply(context, args);
+                };
+            }
+
+            // Función throttle local para evitar errores de carga
+            function throttle(func, limit) {
+                let inThrottle;
+                return function() {
+                    const args = arguments;
+                    const context = this;
+                    if (!inThrottle) {
+                        func.apply(context, args);
+                        inThrottle = true;
+                        setTimeout(() => inThrottle = false, limit);
+                    }
+                };
+            }
+
+            // Usar utilidades de performance globales si están disponibles
+            const { DeviceCapabilities, FPSLimiter, LazyLoadManager, EventListenerManager } = window.NylonPerformance || {};
+            
+            const IS_MOBILE = DeviceCapabilities?.isMobile || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) || window.innerWidth <= 768;
+            const IS_TOUCH = DeviceCapabilities?.isTouch || 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            const reducedMotion = DeviceCapabilities?.prefersReducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const targetFPS = DeviceCapabilities?.getTargetFPS?.() || (IS_MOBILE ? 30 : 60);
+
+            function whenGSAP(cb) {
+                if (typeof gsap !== 'undefined') cb();
+                else requestAnimationFrame(() => whenGSAP(cb));
+            }
+
+            const canvas = document.getElementById('starfield');
+            const ctx = canvas.getContext('2d', { alpha: false });
+            let W, H, stars = [];
+            let warp = 1, targetWarp = 1;
+            let starCount;
+            let warpTimer;
+            
+            // FPS Limiter para controlar rendimiento
+            const fpsLimiter = new (FPSLimiter || class {
+                constructor(fps) { this.targetFPS = fps; this.frameInterval = 1000/fps; this.lastTime = 0; }
+                shouldUpdate(t) { const d = t - this.lastTime; if (d >= this.frameInterval) { this.lastTime = t - (d % this.frameInterval); return true; } return false; }
+            })(targetFPS);
+
+            function initStars() {
+                W = canvas.width = window.innerWidth;
+                H = canvas.height = window.innerHeight;
+                starCount = IS_MOBILE ? 200 : 600; // Reducido para rendimiento
+                stars = Array.from({ length: starCount }, () => ({
+                    x: Math.random() * W - W / 2,
+                    y: Math.random() * H - H / 2,
+                    z: Math.random() * W,
+                }));
+            }
+
+            let animationFrameId = null;
+            let isRendering = true;
+
+            function drawStars(currentTime) {
+                if (!isRendering) {
+                    animationFrameId = null;
+                    return;
+                }
+                
+                // Limitar FPS para rendimiento
+                if (!fpsLimiter.shouldUpdate(currentTime)) {
+                    animationFrameId = requestAnimationFrame(drawStars);
+                    return;
+                }
+
+                warp += (targetWarp - warp) * 0.10;
+
+                ctx.fillStyle = 'rgba(0, 5, 16, 0.28)';
+                ctx.fillRect(0, 0, W, H);
+                ctx.fillStyle = '#FFFFFF';
+
+                for (const s of stars) {
+                    s.z -= warp;
+                    if (s.z <= 0) {
+                        s.x = Math.random() * W - W / 2;
+                        s.y = Math.random() * H - H / 2;
+                        s.z = W;
+                    }
+                    const sx = W / 2 + (s.x / s.z) * W;
+                    const sy = H / 2 + (s.y / s.z) * W;
+                    const r = Math.max(0, (1 - s.z / W) * 2.6);
+                    if (r < 0.05) continue;
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, r, 0, 6.2832);
+                    ctx.fill();
+                }
+                
+                animationFrameId = requestAnimationFrame(drawStars);
+            }
+
+            // Pausar cuando canvas no visible (Intersection Observer)
+            // Solo pausar si canvas sale del viewport DESPUÉS de estar visible
+            let observerInitialized = false;
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        // Solo cambiar estado si ya se inicializó el observer
+                        if (observerInitialized) {
+                            isRendering = entry.isIntersecting;
+                            if (isRendering && !animationFrameId) {
+                                drawStars(0);
+                            } else if (!isRendering && animationFrameId) {
+                                cancelAnimationFrame(animationFrameId);
+                                animationFrameId = null;
+                            }
+                        }
+                    });
+                }, { threshold: 0.1 });
+                observer.observe(canvas);
+                // Marcar como inicializado después de un breve delay
+                setTimeout(() => { observerInitialized = true; }, 500);
+            }
+
+            // Pausar cuando pestaña oculta
+            document.addEventListener('visibilitychange', () => {
+                const wasRendering = isRendering;
+                isRendering = !document.hidden;
+                if (isRendering && !animationFrameId && wasRendering) {
+                    drawStars(0);
+                } else if (!isRendering && animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+            });
+
+            // Resize con debounce
+            window.addEventListener('resize', debounce(initStars, 150), { passive: true });
+
+            initStars();
+            drawStars(0);
+
+            window.addEventListener('load', () => {
+                const bgVideo = document.getElementById('bgVideo');
+                function loadMainVideo() {
+                    if (bgVideo.src) return;
+                    const videoSource = IS_MOBILE ? 'videos/portada_movil.mp4' : 'videos/portada.mp4';
+                    bgVideo.src = videoSource;
+                    bgVideo.load();
+                    bgVideo.addEventListener('canplaythrough', () => {
+                        bgVideo.play().catch(e => console.log("Autoplay prevenido", e));
+                    }, { once: true });
+                }
+
+                if (window.location.hash === '#main-video' || window.location.hash === '#menu') {
+                    loadMainVideo();
+                } else {
+                    setTimeout(loadMainVideo, 2000);
+                }
+            });
+
+            // Lazy Loading con utilidad global
+            if (LazyLoadManager) {
+                const lazyLoader = new LazyLoadManager({ rootMargin: '200px', threshold: 0.1 });
+                lazyLoader.observeAll('.card-image[data-bg]');
+            } else {
+                // Fallback manual
+                const images = document.querySelectorAll('.card-image[data-bg]');
+                if ('IntersectionObserver' in window) {
+                    const io = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                const el = entry.target;
+                                el.style.backgroundImage = `url('${el.dataset.bg}')`;
+                                io.unobserve(el);
+                            }
+                        });
+                    }, { rootMargin: '200px' });
+                    images.forEach(img => io.observe(img));
+                } else {
+                    images.forEach(img => { img.style.backgroundImage = `url('${img.dataset.bg}')`; });
+                }
+            }
+
+            function initTilt() {
+                if (IS_MOBILE || IS_TOUCH || reducedMotion) return;
+
+                document.querySelectorAll('.celestial-card').forEach(card => {
+                    const inner = card.querySelector('.card-inner');
+                    const glare = card.querySelector('.card-glare');
+                    let rafTilt = null;
+                    let tRX = 0, tRY = 0, cRX = 0, cRY = 0;
+
+                    function tickTilt() {
+                        cRX += (tRX - cRX) * 0.14;
+                        cRY += (tRY - cRY) * 0.14;
+                        inner.style.transform = `rotateX(${cRX.toFixed(3)}deg) rotateY(${cRY.toFixed(3)}deg)`;
+                        if (Math.abs(tRX - cRX) > 0.01 || Math.abs(tRY - cRY) > 0.01) {
+                            rafTilt = requestAnimationFrame(tickTilt);
+                        } else {
+                            rafTilt = null;
+                        }
+                    }
+
+                    // Mousemove con throttle para rendimiento
+                    const throttledMouseMove = throttle((e) => {
+                        const rect = card.getBoundingClientRect();
+                        const nx = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+                        const ny = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+                        tRX = ny * -14;
+                        tRY = nx * 14;
+                        glare.style.background = `radial-gradient(circle at ${e.clientX - rect.left}px ${e.clientY - rect.top}px, rgba(245,166,35,0.44), transparent 60%)`;
+                        if (!rafTilt) rafTilt = requestAnimationFrame(tickTilt);
+                    }, 16); // ~60fps max para mousemove
+                    
+                    card.addEventListener('mousemove', throttledMouseMove, { passive: true });
+
+                    card.addEventListener('mouseenter', () => { glare.style.opacity = '1'; inner.style.willChange = 'transform'; });
+                    card.addEventListener('mouseleave', () => {
+                        tRX = 0; tRY = 0;
+                        glare.style.opacity = '0';
+                        inner.style.willChange = '';
+                        if (!rafTilt) rafTilt = requestAnimationFrame(tickTilt);
+                    });
+                });
+            }
+            initTilt();
+
+            whenGSAP(() => {
+                const overlay = document.getElementById('transitionOverlay');
+                const screen2 = document.getElementById('screen2');
+                const btn = document.getElementById('spaceBtn');
+                const backBtn = document.getElementById('backBtn');
+                const bgVideo = document.getElementById('bgVideo');
+                const logo = document.querySelector('.nylon-logo-wrap');
+                const logoImg = document.querySelector('.nylon-logo-img');
+                const scrollHint = document.getElementById('scrollHint');
+                const wordIds = ['wInfinita', 'wIdeas', 'wEn', 'wAdaptabilidad'];
+                const hintLabel = document.querySelector('.hint-label');
+
+                if (hintLabel) {
+                    hintLabel.textContent = IS_TOUCH ? 'toca' : 'scroll';
+                }
+
+                gsap.set(logo, { xPercent: -50, yPercent: -50 });
+                gsap.set(btn, { xPercent: -50, yPercent: -50, scale: 0.1 });
+                gsap.set(scrollHint, { xPercent: -50 });
+                wordIds.forEach(id => gsap.set(document.getElementById(id), { xPercent: -50, yPercent: -50, scale: 0.005, opacity: 0 }));
+
+                if (!reducedMotion) {
+                    gsap.to(scrollHint, { y: 10, duration: 1.8, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+                    [1, 2, 3].forEach((_, i) => {
+                        const c = document.getElementById('chev' + (i + 1));
+                        gsap.fromTo(c, { opacity: 0.15 }, { opacity: 1, duration: 0.55, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: i * 0.22 });
+                    });
+                }
+
+                let wheelCount = 0, sequenceStarted = false;
+
+                function startSequence() {
+                    if (sequenceStarted) return;
+                    sequenceStarted = true;
+                    document.body.style.overflow = 'hidden';
+
+                    gsap.to(scrollHint, {
+                        opacity: 0, y: 20, duration: 0.45, ease: 'power2.in',
+                        onComplete: () => { scrollHint.style.display = 'none'; }
+                    });
+
+                    const master = gsap.timeline();
+                    master.to(logoImg, { scale: 34, opacity: 0, duration: 1.1, ease: 'power2.in' }, 0);
+
+                    const mMult = (typeof IS_MOBILE !== 'undefined' && IS_MOBILE) || (typeof IS_TOUCH !== 'undefined' && IS_TOUCH) || window.innerWidth <= 768 ? 0.6 : 1;
+                    
+                    const words = document.querySelectorAll('.space-word');
+                    
+                    words.forEach((word, index) => {
+                        master.fromTo(word, 
+                            { scale: 0.005, opacity: 0, display: 'block', webkitTextStroke: '2px rgba(255,255,255,0)' },
+                            { scale: 1, opacity: 1, webkitTextStroke: '2px rgba(200,235,255,0.6)', duration: 0.8 * mMult, ease: "power2.out" },
+                            index === 0 ? 0.5 : "+=0" // The first word starts at 0.5s, the rest follow sequentially
+                        )
+                        .to(word, 
+                            { scale: 15, opacity: 0, webkitTextStroke: '2px rgba(255,255,255,0)', duration: 0.6 * mMult, ease: "power1.in" }, 
+                            "+=" + (0.2 * mMult) // Brief pause so the user can read the word
+                        )
+                        .set(word, { display: 'none' }); // Hide it completely to prevent blocking
+                    });
+
+                    // Wait for the sequence to finish before showing the button
+                    master.to(btn, {
+                        scale: 1, opacity: 1, duration: 1.5 * mMult, ease: 'sine.out',
+                        onComplete: () => {
+                            btn.classList.add('clickable');
+                            document.body.style.overflow = '';
+                        }
+                    });
+                }
+
+                function onInput() {
+                    targetWarp = 28;
+                    clearTimeout(warpTimer);
+                    warpTimer = setTimeout(() => { targetWarp = 1; }, 160);
+                    if (!sequenceStarted) {
+                        wheelCount++;
+                        if (wheelCount >= 2) startSequence();
+                    }
+                }
+
+                let touchCount = 0;
+                window.addEventListener('touchmove', () => {
+                    targetWarp = 18;
+                    clearTimeout(warpTimer);
+                    warpTimer = setTimeout(() => { targetWarp = 1; }, 160);
+                    if (!sequenceStarted) {
+                        touchCount++;
+                        if (touchCount >= 1) startSequence();
+                    }
+                }, { passive: true });
+
+                if (IS_MOBILE || IS_TOUCH) {
+                    const hero = document.getElementById('hero');
+                    if (hero) {
+                        hero.addEventListener('click', () => {
+                            if (!sequenceStarted) startSequence();
+                        }, { passive: true });
+                    }
+                }
+
+                window.addEventListener('wheel', onInput, { passive: true });
+
+                function launchLanding() {
+                    btn.classList.remove('clickable');
+                    btn.style.pointerEvents = 'none';
+                    targetWarp = 90;
+
+                    const landing = gsap.timeline();
+
+                    landing.to(overlay, {
+                        opacity: 0.94, duration: 1.5, ease: 'power2.in',
+                        onStart: () => {
+                            overlay.style.background = 'radial-gradient(ellipse at center, rgba(241,106,106,0.8) 0%, rgba(40,229,223,0.82) 55%, rgba(253,253,253,1) 100%)';
+                        }
+                    });
+                    landing.to(overlay, {
+                        background: 'radial-gradient(ellipse at center, rgba(226,125,0,0.50) 0%, rgba(3,136,156,0.67) 55%, rgba(255,255,255,0.90) 100%)',
+                        duration: 0.75, ease: 'power1.inOut'
+                    });
+                    landing.to(overlay, {
+                        background: 'rgba(225,255,255,0.98)', duration: 0.55, ease: 'power2.in'
+                    });
+                    landing.call(() => {
+                        targetWarp = 0.1;
+                        gsap.set(screen2, { opacity: 1, pointerEvents: 'auto' });
+                        screen2.scrollTo(0, 0);
+                        bgVideo.currentTime = 0;
+                        bgVideo.play().catch(() => { });
+                    });
+                    landing.to(overlay, {
+                        opacity: 0, duration: 2.8, ease: 'power1.out',
+                        onComplete: () => { overlay.style.pointerEvents = 'none'; }
+                    });
+                }
+
+                btn.addEventListener('click', launchLanding);
+
+                btn.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    launchLanding();
+                });
+
+                if (backBtn) {
+                    backBtn.addEventListener('click', () => {
+                        const returnFlight = gsap.timeline();
+                        returnFlight.to(overlay, {
+                            opacity: 1, background: 'rgba(0,0,20,0.98)', duration: 1.3, ease: 'power2.in',
+                            onStart: () => { overlay.style.pointerEvents = 'none'; }
+                        });
+                        returnFlight.call(() => {
+                            gsap.set(screen2, { opacity: 0, pointerEvents: 'none' });
+                            bgVideo.pause();
+                            targetWarp = 28;
+                            setTimeout(() => {
+                                btn.classList.add('clickable');
+                                btn.style.pointerEvents = '';
+                            }, 1100);
+                        });
+                        returnFlight.to(overlay, {
+                            opacity: 0, duration: 2.0, ease: 'power2.out',
+                            onComplete: () => { targetWarp = 1; }
+                        });
+                    });
+                }
+
+                if (window.location.hash === '#main-video' || window.location.hash === '#menu') {
+                    gsap.set(overlay, { opacity: 1, background: 'rgba(225,255,255,0.98)' });
+                    targetWarp = 0.1;
+                    gsap.set(screen2, { opacity: 1, pointerEvents: 'auto' });
+                    bgVideo.currentTime = 0;
+                    bgVideo.play().catch(() => { });
+                    gsap.to(overlay, { opacity: 0, duration: 1.5, ease: 'power1.out', delay: 0.2 });
+                }
+
+            });
+
+        })();
+    </script>
+
+    <div id="video-modal" class="video-modal">
+        <div class="video-modal-content">
+            <button class="video-modal-close" aria-label="Cerrar video">&times;</button>
+            <div class="video-modal-player"></div>
+        </div>
+    </div>
+
+    <script src="https://player.vimeo.com/api/player.js"></script>
+    <script>
+        const videoMap = {
+            'cf': { id: '1209349371', title: 'CFMOTO' },
+            'zan': { id: '1209349077', title: 'ZANELLA' },
+            'peugeot': { id: '1209347459', title: 'PEUGEOT' },
+            'rely': { id: '1209347295', title: 'RELY' }
+        };
+
+        const wrappers = document.querySelectorAll('.hud-wrapper');
+        const modal = document.getElementById('video-modal');
+        const modalClose = document.querySelector('.video-modal-close');
+        const modalPlayer = document.querySelector('.video-modal-player');
+
+        let currentPlayer = null;
+
+        // Efecto 3D al mover mouse
+        wrappers.forEach((wrapper) => {
+            const card = wrapper.querySelector('.hud-card');
+
+            wrapper.addEventListener('mousemove', (e) => {
+                const rect = wrapper.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                const mouseX = e.clientX - centerX;
+                const mouseY = e.clientY - centerY;
+                
+                const rotateX = (mouseY / (rect.height / 2)) * -12;
+                const rotateY = (mouseX / (rect.width / 2)) * 12;
+
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            wrapper.addEventListener('mouseleave', () => {
+                card.style.transform = `rotateX(0deg) rotateY(0deg)`;
+            });
+
+            // Click para abrir video
+            wrapper.addEventListener('click', (e) => {
+                e.preventDefault();
+                const href = wrapper.getAttribute('href');
+                let brand = '';
+                
+                if (href.includes('.cf')) brand = 'cf';
+                else if (href.includes('.zan')) brand = 'zan';
+                else if (href.includes('peugeot')) brand = 'peugeot';
+                else if (href.includes('rely')) brand = 'rely';
+                
+                if (videoMap[brand]) {
+                    openVideoModal(brand);
+                }
+            });
+        });
+
+        function openVideoModal(brand) {
+            const video = videoMap[brand];
+            const videoId = video.id;
+            const title = video.title;
+            
+            // Recuperar timestamp guardado
+            const savedTime = localStorage.getItem(`vimeo_${brand}_time`) || 0;
+            
+            // Crear iframe con autoplay=1 y parámetros para reproducción automática
+            modalPlayer.innerHTML = `
+                <div style="padding:56.25% 0 0 0;position:relative;">
+                    <iframe 
+                        id="vimeo-player-${brand}"
+                        src="https://player.vimeo.com/video/${videoId}?badge=0&autopause=1&player_id=vimeo-player-${brand}&app_id=58479&autoplay=1&muted=0" 
+                        frameborder="0" 
+                        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" 
+                        referrerpolicy="strict-origin-when-cross-origin" 
+                        style="position:absolute;top:0;left:0;width:100%;height:100%;" 
+                        title="${title}">
+                    </iframe>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+            
+            // Usar Vimeo API para control de reproducción y guardado
+            setTimeout(() => {
+                const iframe = document.getElementById(`vimeo-player-${brand}`);
+                const player = new Vimeo.Player(iframe);
+                currentPlayer = player;
+                
+                // Si hay timestamp guardado, buscar a ese punto
+                if (savedTime > 0) {
+                    player.setCurrentTime(parseFloat(savedTime));
+                }
+                
+                // Guardar el tiempo cada 2 segundos
+                player.on('timeupdate', (data) => {
+                    localStorage.setItem(`vimeo_${brand}_time`, data.seconds);
+                });
+                
+                // Limpiar cuando se pause o termine
+                player.on('ended', () => {
+                    localStorage.removeItem(`vimeo_${brand}_time`);
+                });
+            }, 100);
+        }
+
+        function closeVideoModal() {
+            modal.classList.remove('active');
+            if (currentPlayer) {
+                currentPlayer.pause();
+            }
+            modalPlayer.innerHTML = '';
+            currentPlayer = null;
+        }
+
+        modalClose.addEventListener('click', closeVideoModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeVideoModal();
+        });
+
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeVideoModal();
+            }
+        });
+    </script>
+</body>
+
+</html>
